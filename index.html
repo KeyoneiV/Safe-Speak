@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Report an Incident</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <h1>Anti-Bullying Reporting Form</h1>
+
+    <form action="https://script.google.com/macros/s/AKfycbz4wXD2_K1gMnIyyMmnsKHioZYc_A0siz1zgf6oIRhJKkV2IpNBsmCchguRXjQIeUCAQw/exec" method="post">
+
+      <label for="date">Date of Incident:</label><br>
+      <input type="datetime-local" id="date" name="date" required><br><br>
+
+      <label for="who">Who was involved?</label><br>
+      <input type="text" id="who" name="who" required><br><br>
+
+      <label for="what">What happened?</label><br>
+      <textarea id="what" name="what" rows="4" required></textarea><br><br>
+
+      <label for="location">Where did it happen?</label><br>
+      <input type="text" id="location" name="location" required><br><br>
+
+      <button type="submit">Submit Report</button>
+    </form>
+
+<h1>Reported Incidents</h1>
+    
+    <button id="load-button">Load Reports</button>
+    
+    <div id="data-container"></div>
+
+    <script>
+      // Paste your Google Apps Script deployment URL here
+      const scriptURL = 'https://script.google.com/macros/s/AKfycbz4wXD2_K1gMnIyyMmnsKHioZYc_A0siz1zgf6oIRhJKkV2IpNBsmCchguRXjQIeUCAQw/exec';
+      
+      // Get references to the button and the data container
+      const loadButton = document.getElementById('load-button');
+      const dataContainer = document.getElementById('data-container');
+
+      // 2. WRAP THE FETCH LOGIC IN A FUNCTION
+      // This function will fetch and display the data from your Google Sheet
+      function loadReports() {
+        dataContainer.innerHTML = "Loading data..."; // Show a loading message
+
+        fetch(scriptURL)
+          .then(response => response.json())
+          .then(data => {
+            
+            dataContainer.innerHTML = ""; // Clear the loading message
+
+            // Loop through each report (each row from the sheet)
+            data.forEach(report => {
+              // Create a new div element for this report
+              const reportDiv = document.createElement('div');
+              reportDiv.className = 'report';
+              
+              // Create the HTML content for the report
+              reportDiv.innerHTML = `
+                <h3>Incident on: ${report.date}</h3>
+                <p><strong>Location:</strong> ${report.location}</p>
+                <p><strong>Who was involved:</strong> ${report.who}</p>
+                <p><strong>What happened:</strong> ${report.what}</p>
+              `;
+              
+              // Add the new report div to our main container
+              dataContainer.appendChild(reportDiv);
+            });
+          })
+          .catch(error => {
+              console.error('Error!', error.message);
+              dataContainer.innerHTML = "Error loading data.";
+          });
+      }
+
+      // 3. ADD AN EVENT LISTENER
+      // This line tells the browser to wait for a click on the button.
+      // When the button is clicked, it will run the loadReports() function.
+      loadButton.addEventListener('click', loadReports);
+    </script>
+
+  </body>
+</html>
