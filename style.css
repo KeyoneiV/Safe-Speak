@@ -12,10 +12,21 @@
     --color-text-primary: #333333;   /* Dark grey for text on light backgrounds */
     --color-text-secondary: #555555; /* Slightly lighter grey for paragraph text */
     --color-text-light: #ffffff;     /* White for text on dark backgrounds */
-    --color-btn-dark: #222222;       /* Dark button background */
+    --color-btn-dark: #000000;       /* Dark button background */
     --color-btn-text-light: #ffffff; /* White text on dark buttons */
     --color-link: #007bff;           /* Standard blue for links */
     --font-stack: 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif; /* Modern sans-serif */
+
+    /* Configurable Circle Animation Settings */
+    --circle-color: rgba(74, 144, 226, 0.1);
+    --circle-thickness: 20px;
+    --circle-anim-duration: 8s;
+
+    --story-bg: #000000;
+    --contact-bg: #000000;
+
+    /* Card background used across overlays */
+    --card-bg-light: rgba(255, 255, 255, 0.95);
 }
 
 * {
@@ -27,12 +38,68 @@
 body {
     font-family: var(--font-stack);
     line-height: 1.6;
-    color: var(--color-text-primary);
-    background-color: var(--color-light); /* Will be mostly covered by section backgrounds */
+    color: var(--color-text-light);
+    /* More sophisticated body background: gradient + subtle noise pattern */
+    background-color: #0a0a0a;
+    background-image:
+            radial-gradient(ellipse at center, rgba(20, 20, 20, 0.7) 0%, rgba(5, 5, 5, 0.9) 100%),
+            linear-gradient(180deg, #0a0a0a 0%, #151515 50%, #0a0a0a 100%),
+            url('data:image/svg+xml;utf8,<svg width="10" height="10" viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg"><g fill="%23FFFFFF" fill-opacity="0.03" fill-rule="evenodd"><path d="M0 0h10v10H0zM2 0v2H0V0h2zm4 0v2H4V0h2zm4 0v2H8V0h2zM0 4v2H0V4h2zm4 4v2H0V8h4zm6 0v2H6V8h4z"/></g></svg>');
+    background-attachment: fixed;
+    background-blend-mode: overlay, normal, multiply;
     display: flex;
     flex-direction: column;
     min-height: 100vh;
+    position: relative;
 }
+
+/* Keyframe animation for the pulsing circles (only needed once) */
+@keyframes pulse-circles {
+    0% {
+        transform: scale(0.7) translate(-50%, -50%);
+        opacity: 0;
+    }
+    50% {
+        opacity: 0.8;
+    }
+    100% {
+        transform: scale(1.1) translate(-50%, -50%);
+        opacity: 0;
+    }
+}
+
+/* ======================================
+    1B. DYNAMIC CIRCLE BACKGROUND STYLES
+    ======================================
+*/
+
+.circle-container {
+    /* Container to hold all circles, FIXED to the viewport (solves scrolling issue) */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden; /* Hide circles that go off-screen */
+    pointer-events: none; /* Allows clicks to go through to the content below */
+    z-index: -1; /* Pushes the circles behind all content */
+}
+
+.circle-background {
+    position: absolute; /* Positioned relative to the .circle-container */
+    border-radius: 50%;
+    border: var(--circle-thickness) solid var(--circle-color);
+    box-sizing: content-box;
+    /* Starting scale and opacity for the animation */
+    transform: translate(-50%, -50%);
+    opacity: 0;
+
+    /* Animation applied here - duration and delay will be set by JavaScript */
+    animation-name: pulse-circles;
+    animation-timing-function: ease-out;
+    animation-iteration-count: infinite;
+}
+
 
 /* ======================================
     2. HEADER & NAVIGATION
@@ -40,8 +107,9 @@ body {
 */
 
 .main-header {
-    background: black;
-    color: var(--color-text-light); /* White text for header elements */
+    /* Adjust header gradient to blend with the body's top */
+    background: linear-gradient(180deg, #0a0a0a 0%, rgba(10, 10, 10, 0.9) 75%);
+    color: var(--color-text-light);
     padding: 1rem 5%;
     display: flex;
     justify-content: space-between;
@@ -49,17 +117,19 @@ body {
     position: absolute;
     width: 100%;
     z-index: 100;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    border-bottom: none;
 }
 
-.logo {
-    font-size: 1.5rem;
+.logo-text {
+    font-size: 1.8rem;
     font-weight: 700;
-    letter-spacing: 0.5px;
-    color: var(--color-text-light); /* White logo text */
+    color: var(--color-text-light);
+    letter-spacing: 1px;
 }
 
 .main-header nav a {
-    color: var(--color-text-light); /* White navigation links */
+    color: var(--color-text-light);
     text-decoration: none;
     font-weight: 500;
     padding: 0.5rem 0.8rem;
@@ -68,21 +138,26 @@ body {
 
 .main-header nav a:hover,
 .main-header nav .active-nav {
-    color: var(--color-link); /* A subtle hover effect */
+    color: var(--color-link);
 }
+
 
 /* ======================================
     3. REUSABLE CARD OVERLAY STYLE
     ======================================
 */
+
 .card-overlay {
-    background: var(--color-card-bg); /* Semi-transparent white background */
-    padding: 3rem; /* Adjusted for more space like in the image */
-    border-radius: 15px; /* More rounded corners */
-    max-width: 650px; /* Constrained width */
+    background: var(--card-bg-light);
+    padding: 3rem;
+    border-radius: 15px;
+    max-width: 650px;
     text-align: center;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); /* Clearer shadow */
-    margin: 20px; /* Space from edges on smaller screens */
+    /* Ensures the card is always above the body circles */
+    position: relative;
+    z-index: 2;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    margin: 20px;
 }
 
 
@@ -92,45 +167,67 @@ body {
 */
 
 .hero-section {
-    /* REMEMBER TO REPLACE THIS URL WITH YOUR IMAGE */
     background: url('https://media.gettyimages.com/id/1468140092/photo/happy-elementary-students-raising-their-hands-on-a-class-at-school.jpg?s=612x612&w=0&k=20&c=BrkqxwR_nW4WzbDCAmpQEyF-QYvML9EktH4hhCj-76U=') no-repeat center center/cover;
-    height: 100vh; /* Make hero cover full viewport height */
+    height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
     text-align: center;
     position: relative;
-    color: var(--color-text-primary); /* Default text color for inside the card */
+    color: var(--color-text-primary);
+}
+
+.hero-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 1;
+}
+
+.hero-section .card-overlay {
+    background: rgba(255,255,255,0.95);
+    max-width: 600px;
+    padding: 3rem;
+    text-align: center;
+    color: var(--color-text-primary);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+    position: relative;
+    z-index: 2;
+    border: 2px solid rgba(74, 144, 226, 0.3);
 }
 
 .hero-section h1 {
-    font-size: 2.8rem; /* Slightly larger for impact */
+    font-size: 2.8rem;
     margin-bottom: 0.8rem;
-    color: var(--color-text-primary); /* Ensure heading color is dark */
+    color: var(--color-text-primary);
 }
 
 .hero-section p {
     font-size: 1.1rem;
-    margin-bottom: 2rem; /* More space above button */
+    margin-bottom: 2rem;
     color: var(--color-text-secondary);
 }
 
-/* Button style matching the Wix design (black button, white text, rounded) */
+/* Button style */
 .btn-submit {
     display: inline-block;
     background-color: var(--color-btn-dark);
     color: var(--color-btn-text-light);
-    padding: 0.9rem 2.5rem; /* Larger padding for a more prominent button */
+    padding: 0.9rem 2.5rem;
     text-decoration: none;
     font-size: 1.05rem;
     font-weight: 500;
-    border-radius: 30px; /* Fully rounded pill shape */
-    border: none; /* No border for a clean look */
+    border-radius: 30px;
+    border: none;
     transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 .btn-submit:hover {
-    background-color: #122cec; /* Darker on hover */
+    background-color: var(--color-btn-hover);
     transform: translateY(-2px);
 }
 
@@ -141,26 +238,33 @@ body {
 */
 
 .story-section {
-    /* REMEMBER TO REPLACE THIS URL WITH YOUR IMAGE */
-    padding: 5rem 5%; /* Generous padding top/bottom */
+    /* Ensures background is transparent to show animated body background */
+    background: transparent;
+    position: relative;
+    padding: 5rem 5%;
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 60vh; /* Ensures it takes up a good amount of vertical space */
-    position: relative;
+    min-height: 60vh;
+    z-index: 1; /* Keep section content above the background */
 }
 
+
 .story-section .card-overlay {
-    background: var(--color-card-bg); /* Use the consistent card background */
-    max-width: 600px; /* Wider card for story content */
-    padding: 3.5rem; /* More internal padding */
+    background: var(--card-bg-light);
+    max-width: 600px;
+    padding: 3.5rem;
     text-align: center;
-    color: var(--color-text-primary); /* Ensure text is dark */
+    color: var(--color-text-primary);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+    position: relative;
+    z-index: 2;
+    border: 2px solid rgba(74, 144, 226, 0.3);
 }
 
 .story-section h2 {
     font-size: 2.2rem;
-    color: var(--color-text-primary); /* Dark heading color */
+    color: var(--color-text-primary);
     margin-bottom: 1.2rem;
 }
 
@@ -169,80 +273,96 @@ body {
     color: var(--color-text-secondary);
 }
 
+
 /* ======================================
-    6. CONTACT FOOTER
+    6. CONTACT SECTION
     ======================================
 */
 
-.contact-footer {
+.contact-section {
+    /* Ensures background is transparent to show animated body background */
+    background: transparent;
     padding: 5rem 5%;
     text-align: center;
-    margin-top: auto; /* Pushes the footer to the bottom */
     position: relative;
-    min-height: 60vh; /* Make footer also take substantial vertical space */
+    min-height: 60vh;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    z-index: 1; /* Keep section content above the background */
 }
 
-/* Overlay for the footer background image to make content readable */
-.contact-footer::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.6); /* Semi-transparent dark overlay */
-    z-index: 1;
-}
 
-.contact-footer > * { /* Ensures all direct children are above the overlay */
-    position: relative;
-    z-index: 2;
-}
-
+/* Contact card elevated and interactive */
 .contact-card {
-    max-width: 450px; /* Slightly wider for contact details */
-    margin: 0 auto 2rem;
-    padding: 2.5rem;
-    background: var(--color-card-bg); /* Use consistent card background */
-    border-radius: 15px; /* Rounded corners */
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-    color: var(--color-text-primary); /* Dark text for contact card */
+    max-width: 540px;
+    margin: 0 auto;
+    padding: 2.75rem;
+    /* Increased opacity for better visibility */
+    background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(250,250,250,0.96));
+    border-radius: 16px;
+    color: var(--color-text-primary);
+    box-shadow:
+            0 10px 30px rgba(0,0,0,0.35),
+            0 0 45px rgba(74,144,226,0.08); /* Cool ambient glow */
+    border: 1px solid rgba(74,144,226,0.12);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    position: relative;
+    z-index: 2; /* Ensures the card is above the section wrapper's z-index: 1 */
 }
 
-.contact-footer h2 {
-    color: var(--color-text-primary); /* Dark heading in the card */
-    font-size: 2rem;
+.contact-section h2 {
+    color: var(--color-text-primary);
+    font-size: 2.2rem;
+    margin-bottom: 1.5rem;
+    font-weight: 700;
+}
+
+.contact-section p {
     margin-bottom: 1rem;
-}
-
-.contact-footer p {
-    margin-bottom: 0.7rem;
     color: var(--color-text-secondary);
+    font-size: 1.05rem;
 }
 
-.contact-footer a {
-    color: var(--color-link); /* Standard link blue */
+.contact-section a {
+    color: var(--color-link);
     text-decoration: none;
-    font-weight: 500;
+    font-weight: 600;
+    transition: color 0.3s ease;
 }
 
-.contact-footer a:hover {
+.contact-section a:hover {
+    color: var(--color-btn-hover);
     text-decoration: underline;
 }
 
-.copyright {
-    margin-top: 2rem; /* More space above copyright */
-    font-size: 0.9rem;
-    color: rgba(255, 255, 255, 0.7); /* Lighter copyright text on dark background */
+/* ======================================
+    7. FOOTER
+    ======================================
+*/
+
+.main-footer {
+    background: #0a0a0a;
+    color: var(--color-text-light);
+    padding: 2rem 5%;
+    text-align: center;
+    margin-top: auto;
 }
 
+.copyright {
+    margin: 0;
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.8);
+    font-weight: 400;
+}
+
+.contact-footer {
+    display: none;
+}
 
 /* ======================================
-    7. RESPONSIVENESS
+    8. RESPONSIVENESS
     ======================================
 */
 
@@ -283,6 +403,46 @@ body {
     .contact-footer h2 {
         font-size: 1.8rem;
     }
+
+    .logo {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .logo-text {
+        font-size: 1.4rem;
+    }
+
+    .main-header nav {
+        margin-top: 0.8rem;
+    }
+
+    .hero-section h1 {
+        font-size: 2.2rem;
+    }
+
+    .hero-section p {
+        font-size: 1rem;
+    }
+
+    .card-overlay {
+        padding: 2rem;
+        max-width: 90%;
+    }
+
+    .btn-submit {
+        padding: 0.8rem 2rem;
+        font-size: 1rem;
+    }
+
+    .story-section .card-overlay,
+    .contact-card {
+        padding: 2rem;
+    }
+
+    .contact-section h2 {
+        font-size: 1.8rem;
+    }
 }
 
 @media (max-width: 480px) {
@@ -301,5 +461,9 @@ body {
 
     .story-section h2 {
         font-size: 1.6rem;
+    }
+
+    .logo-text {
+        font-size: 1.2rem;
     }
 }
