@@ -65,7 +65,47 @@ export async function getData() {
         console.error('GET request error:', error);
         return error;
     }
-
-
-
 }
+
+/**
+async function testData() {
+
+    const accountData = {
+        isAccount: true,
+        Email: 'test_email@gmail.com',
+        Username: 'test_username',
+        Password: 'hased_test_password',
+        OtherData: 'other_data'
+    }
+
+    const reportData = {
+        isReport: true,
+        Victim: 'test_victim',
+        Suspect: 'test_suspect',
+        Location: 'test_location',
+        Date: 'test_date',
+        Description: 'test_description',
+        Class: 'test_class'
+    }
+
+    console.log("--- Testing GET Data ---")
+    let data;
+    data = await getData();
+    console.log(`${data}\n`);
+
+    console.log("--- Testing POST Data ---")
+    data = await postData(accountData);
+    console.log(`${data}\n`);
+
+    console.log("--- Testing POST Data ---")
+    data = await postData(reportData);
+    console.log(`${data}\n`);
+
+    console.log("--- Testing GET Data ---")
+    data = await getData();
+    console.log(`${data}\n`);
+}
+
+testData();
+
+**/

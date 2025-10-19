@@ -1,0 +1,67 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <title>Sign Up</title>
+        <link rel="stylesheet" href="../../style.css">
+        <link rel="stylesheet" href="./signup.css">
+    </head>
+
+    <body>
+
+    <div class="container card-overlay">
+
+        <h2 style="color: var(--color-text-primary);">Sign Up for Safe-Speak</h2>
+
+        <form id="signup-form">
+
+            <!-- Step Indicator -->
+            <div class="step-indicator">
+                <span class="step active" id="step-1-indicator">Step 1</span>
+                <span class="separator">|</span>
+                <span class="step" id="step-2-indicator">Step 2</span>
+            </div>
+
+            <!-- Step 1 -->
+            <div class="form-step" id="step-1">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" required>
+                <span id="username-error" class="error-message"></span>
+
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+                <span id="email-error" class="error-message"></span>
+
+                <button type="button" id="next-btn" class="btn-submit">Next</button>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="form-step hidden" id="step-2">
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required>
+                <span id="password-error" class="error-message"></span>
+
+                <label for="confirm-password">Confirm Password:</label>
+                <input type="password" id="confirm-password" name="confirm-password" required>
+                <span id="confirm-password-error" class="error-message"></span>
+
+                <div class="button-group">
+                    <button type="button" id="back-btn" class="btn-back">Back</button>
+                    <button type="submit" id="submit-btn" class="btn-submit">Sign Up</button>
+                </div>
+
+                <span id="server-error" class="error-message"></span>
+            </div>
+        </form>
+
+
+    </div>
+
+    <script src="signup.js" type="module"></script>
+
+    </body>
+
+</html>
