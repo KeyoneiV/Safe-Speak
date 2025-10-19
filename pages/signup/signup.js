@@ -2,6 +2,7 @@
 // === Imports ===
 
 import { postData } from "../../utils/ApiHandler.js";
+import { setCookie} from "../../utils/CookieHandler.js";
 
 // === Elements ===
 
@@ -24,6 +25,7 @@ const confirmPasswordInput = document.getElementById('confirm-password');
 // === Helper Functions ===
 
 function displayError(elementId, message) {
+
     const errorSpan = document.getElementById(elementId);
     const inputElement = document.getElementById(elementId.replace('-error', ''));
 
@@ -34,9 +36,16 @@ function displayError(elementId, message) {
         if (errorSpan) errorSpan.textContent = '';
         if (inputElement) inputElement.classList.remove('error');
     }
+
 }
 
 function validateStep1() {
+
+    /*
+    Username Requirements:
+        1. At least 3 characters
+    */
+
     let isValid = true;
     displayError('username-error', '');
     displayError('email-error', '');
@@ -58,6 +67,15 @@ function validateStep1() {
 }
 
 function validateStep2() {
+
+    /*
+    Password Requirements:
+        1. At least 8 characters
+        2. Must contain at least one uppercase letter, one lowercase letter, one number, and one special character
+        3. Must not contain space
+    */
+
+
     let isValid = true;
     displayError('password-error', '');
     displayError('confirm-password-error', '');
@@ -65,11 +83,30 @@ function validateStep2() {
     const password = passwordInput.value;
     const confirmPassword = confirmPasswordInput.value;
 
+    // Check for minimum length
     if (password.length < 8) {
         displayError('password-error', 'Password must be at least 8 characters.');
         isValid = false;
     }
 
+    // Check for spaces
+    if (password.includes(' ')) {
+        displayError('password-error', 'Password cannot contain spaces.');
+        isValid = false;
+    }
+
+    // Check for required characters
+    const hasUppercase = /[A-Z]/.test(password);
+    const hasLowercase = /[a-z]/.test(password);
+    const hasNumber = /\d/.test(password);
+    const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+
+    if (!hasUppercase || !hasLowercase || !hasNumber || !hasSpecialChar) {
+        displayError('password-error', 'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character.');
+        isValid = false;
+    }
+
+    // Check if passwords match
     if (password !== confirmPassword) {
         displayError('confirm-password-error', 'Passwords do not match.');
         isValid = false;
@@ -131,7 +168,16 @@ async function submitForm(e) {
             displayError('server-error', 'Success! Redirecting...');
             submitButton.textContent = 'Signed Up!';
             submitButton.style.backgroundColor = '#28a745';
-            // window.location.href = '/login.html'; // Uncomment when ready
+            
+            // Store user info in a cookie
+            setCookie('username', data.Username);
+            setCookie('email', data.Email,);
+            
+            // Redirect to the next page
+            setTimeout(() => {
+                window.location.href = '../../index.html'
+            }, 1500)
+            
         } else {
             const serverMessage = responseData.message || 'Signup failed due to a server error.';
             displayError('server-error', serverMessage);

@@ -1,4 +1,10 @@
 
+// === Imports ===
+
+import { getCookie } from "./utils/CookieHandler.js";
+
+// === Main Script ===
+
 document.addEventListener('DOMContentLoaded', () => {
     // ------------------------------------------------------
     // 1. Setup for Dynamic Circles
