@@ -75,7 +75,6 @@ function validateStep2() {
         3. Must not contain space
     */
 
-
     let isValid = true;
     displayError('password-error', '');
     displayError('confirm-password-error', '');

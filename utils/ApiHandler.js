@@ -74,7 +74,7 @@ async function testData() {
         isAccount: true,
         Email: 'test_email@gmail.com',
         Username: 'test_username',
-        Password: 'hased_test_password',
+        Password: 'hashed_test_password',
         OtherData: 'other_data'
     }
 
